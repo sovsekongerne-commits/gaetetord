@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { GameMode, Language, GameSettings } from '../types';
-import { Mic2, HandMetal, VolumeX, Play, ChevronLeft, Star, Smile, Zap, Heart, Layers, Info } from 'lucide-react';
+import { Mic2, HandMetal, VolumeX, Play, ChevronLeft, Star, Smile, Zap, Heart, Layers, Info, Users, ScanFace, RefreshCw, ArrowRight, Check } from 'lucide-react';
 
 interface MenuProps {
   onStart: (settings: GameSettings) => void;
 }
 
-type MenuStep = 'intro' | 'language' | 'mode' | 'count';
+type MenuStep = 'intro' | 'tutorial' | 'language' | 'mode' | 'count';
 
 export const Menu: React.FC<MenuProps> = ({ onStart }) => {
   const [step, setStep] = useState<MenuStep>('intro');
   const [lang, setLang] = useState<Language>(Language.DA);
   const [mode, setMode] = useState<GameMode>(GameMode.MIME);
   const [hoveredMode, setHoveredMode] = useState<GameMode | null>(null);
+  const [tutorialFlipped, setTutorialFlipped] = useState(false);
 
   const handleLanguageSelect = (selectedLang: Language) => {
     setLang(selectedLang);
@@ -103,7 +104,7 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
           </p>
           
           <button
-            onClick={() => setStep('language')}
+            onClick={() => setStep('tutorial')}
             className="animate-dance group relative bg-[#fbbf24] hover:bg-[#f59e0b] text-white text-2xl sm:text-3xl md:text-5xl font-black py-6 px-10 md:py-10 md:px-20 rounded-[2rem] shadow-[0_8px_0_#d97706] md:shadow-[0_12px_0_#d97706] active:shadow-[0_2px_0_#d97706] active:translate-y-[6px] transition-all flex items-center gap-3 md:gap-6 border-[5px] md:border-[8px] border-[#fffbeb]"
           >
             <Play className="w-8 h-8 md:w-14 md:h-14 group-hover:scale-110 transition-transform" fill="currentColor" />
@@ -111,6 +112,136 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
           </button>
         </div>
       </div>
+    );
+  }
+
+  // Tutorial Flip Card
+  if (step === 'tutorial') {
+    return (
+        <div 
+            className="flex flex-col items-center justify-center min-h-screen bg-[#38bdf8] p-4 relative [perspective:2000px] overflow-y-auto"
+        >
+            <BackgroundDecorations />
+            
+            {/* 
+                COMPACT SIZE:
+                max-w-3xl, h-[600px] 
+            */}
+            <div className="w-full max-w-3xl h-[600px] relative z-20 my-auto">
+                
+                {/* The "Flipper" Inner Container */}
+                <div className={`relative w-full h-full spring-flip preserve-3d ${tutorialFlipped ? 'rotate-y-180' : ''}`}>
+                    
+                    {/* --- FRONT SIDE: SETUP --- */}
+                    <div 
+                        onClick={() => setTutorialFlipped(true)}
+                        className="absolute inset-0 backface-hidden bg-white text-slate-900 w-full h-full p-6 md:p-8 rounded-[2rem] shadow-xl border-[6px] border-yellow-400 flex flex-col items-center text-center overflow-hidden cursor-pointer"
+                    >
+                        <div className="w-full flex justify-end">
+                            <div className="text-slate-300 font-bold text-xl">1 / 2</div>
+                        </div>
+                        
+                        <h2 className="text-4xl md:text-5xl font-black text-[#0ea5e9] mb-4 uppercase tracking-tight relative z-10 mt-1">
+                            Sådan spiller I
+                        </h2>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full relative z-10 mb-4">
+                            <div className="bg-blue-50 p-4 rounded-2xl border-2 border-blue-100 flex flex-col items-center gap-2 shadow-sm">
+                                <div className="bg-white p-3 rounded-full shadow-sm">
+                                    <Users size={36} className="text-[#0ea5e9]" />
+                                </div>
+                                <h3 className="font-black text-2xl text-slate-800">Lav makkerpar</h3>
+                                <p className="text-slate-600 font-bold text-lg leading-tight">
+                                    Stil jer overfor hinanden.
+                                </p>
+                            </div>
+                            <div className="bg-pink-50 p-4 rounded-2xl border-2 border-pink-100 flex flex-col items-center gap-2 shadow-sm">
+                                <div className="bg-white p-3 rounded-full shadow-sm">
+                                    <ScanFace size={36} className="text-pink-500" />
+                                </div>
+                                <h3 className="font-black text-2xl text-slate-800">Ryg til skærmen</h3>
+                                <p className="text-slate-600 font-bold text-lg leading-tight">
+                                    Gætteren må <span className="underline decoration-pink-300">ikke</span> se!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="bg-yellow-50 w-full p-5 rounded-2xl border-2 border-yellow-200 relative z-10 shadow-sm flex-1 flex flex-col justify-center">
+                            <h3 className="font-black text-xl mb-1 uppercase text-yellow-600">Opgaven</h3>
+                            <p className="text-2xl font-bold text-slate-800 leading-snug">
+                                En forklarer/mimer.<br/>
+                                Den anden gætter hurtigst muligt!
+                            </p>
+                        </div>
+
+                        <div className="mt-6 animate-pulse flex items-center justify-center">
+                            <span className="text-slate-400 font-black uppercase tracking-widest text-base flex items-center gap-2">
+                                Tryk for at komme videre <ArrowRight size={24} />
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* --- BACK SIDE: RULES --- */}
+                    <div 
+                        onClick={() => setStep('language')}
+                        className="absolute inset-0 backface-hidden rotate-y-180 bg-white text-slate-900 w-full h-full p-6 md:p-8 rounded-[2rem] shadow-xl border-[6px] border-green-400 flex flex-col items-center text-center overflow-hidden cursor-pointer"
+                    >
+                        <div className="w-full flex justify-end">
+                            <div className="text-slate-300 font-bold text-xl">2 / 2</div>
+                        </div>
+
+                        <h2 className="text-4xl md:text-5xl font-black text-green-500 mb-4 uppercase tracking-tight relative z-10 mt-1">
+                            Vigtige Regler!
+                        </h2>
+
+                        <div className="grid grid-cols-2 gap-3 w-full relative z-10 mb-3">
+                            {/* Setup & Points */}
+                            <div className="bg-blue-50 p-4 rounded-2xl border-2 border-blue-100 flex flex-col items-center gap-2 shadow-sm justify-center">
+                                <Users size={32} className="text-[#0ea5e9]" />
+                                <h3 className="font-black text-xl text-slate-800 uppercase leading-none">I er et hold</h3>
+                            </div>
+
+                            {/* Switching */}
+                            <div className="bg-purple-50 p-4 rounded-2xl border-2 border-purple-100 flex flex-col items-center gap-2 shadow-sm justify-center">
+                                <RefreshCw size={32} className="text-purple-500" />
+                                <h3 className="font-black text-xl text-slate-800 uppercase leading-tight">Skift plads efter hvert ord!</h3>
+                            </div>
+                        </div>
+
+                        {/* The Golden Rule: Silence */}
+                        <div className="bg-red-50 w-full p-4 rounded-2xl border-2 border-red-200 relative z-10 shadow-sm flex flex-col justify-center flex-1 mb-3">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-500 text-white px-4 py-0.5 rounded-full font-black uppercase text-xs tracking-widest shadow-md transform -rotate-1">
+                                VIGTIGST!
+                            </div>
+                            <h3 className="font-black text-2xl mb-2 text-slate-800 mt-2 uppercase flex items-center justify-center gap-2">
+                                Når ordet er gættet... 🤫
+                            </h3>
+                            <div className="text-left bg-white/70 p-4 rounded-xl space-y-2">
+                                <div className="flex items-start gap-3">
+                                    <span className="bg-red-100 text-red-600 font-black w-7 h-7 flex items-center justify-center rounded-full text-base shrink-0 mt-0.5">1</span>
+                                    <p className="text-slate-700 font-bold leading-tight text-lg">Forklareren må kun <span className="underline decoration-4 decoration-yellow-400">nikke</span>.</p>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="bg-red-100 text-red-600 font-black w-7 h-7 flex items-center justify-center rounded-full text-base shrink-0 mt-0.5">2</span>
+                                    <p className="text-slate-700 font-bold leading-tight text-lg">Tag <span className="text-blue-600 font-black">armene ned</span> langs siden.</p>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="bg-red-100 text-red-600 font-black w-7 h-7 flex items-center justify-center rounded-full text-base shrink-0 mt-0.5">3</span>
+                                    <p className="text-slate-700 font-bold leading-tight text-lg">Vær herefter <span className="text-red-600 font-black">HELT STILLE</span> så de andre ikke hører svaret fra jer.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-auto animate-pulse flex items-center justify-center pt-4">
+                             <span className="text-slate-400 font-black uppercase tracking-widest text-base flex items-center gap-2">
+                                Tryk for at spille <Check size={24} />
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     );
   }
 
@@ -146,7 +277,10 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
         </div>
         
         <button 
-            onClick={() => setStep('intro')}
+            onClick={() => {
+                setStep('tutorial');
+                setTutorialFlipped(false);
+            }}
             className="mt-16 text-white/70 hover:text-white font-bold text-xl flex items-center gap-2 z-10"
         >
             <ChevronLeft size={32} /> Tilbage

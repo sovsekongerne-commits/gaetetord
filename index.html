@@ -66,6 +66,26 @@
             border-bottom-width: 2px;
             margin-top: 4px; /* To prevent layout shift visually */
         }
+
+        /* Spring Flip Animation Physics - Adjusted to 0.7s (30% faster) */
+        .spring-flip {
+            transition: transform 0.7s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+        }
+        
+        /* Utility for 3D preservation */
+        .preserve-3d {
+            transform-style: preserve-3d;
+        }
+        
+        /* Utility for backface visibility */
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
     </style>
 <script type="importmap">
 {
