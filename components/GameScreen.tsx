@@ -3,7 +3,7 @@ import { GameMode, Language, WordCard, GameSettings } from '../types';
 import { WORD_LIST, GAME_DURATION_SECONDS, AUDIO_ALERT_THRESHOLD } from '../constants';
 import { GameCard } from './GameCard';
 import { playBeep } from '../utils/audio';
-import { Check, ArrowRight, Pause, Play, Clock } from 'lucide-react';
+import { Check, ArrowRight, Pause, Play, Clock, Users, Monitor, ScanFace } from 'lucide-react';
 
 interface GameScreenProps {
   settings: GameSettings;
@@ -11,7 +11,7 @@ interface GameScreenProps {
   onExit: () => void;
 }
 
-type GamePhase = 'ready' | 'countdown' | 'playing';
+type GamePhase = 'instructions' | 'ready' | 'countdown' | 'playing';
 
 export const GameScreen: React.FC<GameScreenProps> = ({ settings, onEndGame, onExit }) => {
   const [deck, setDeck] = useState<WordCard[]>([]);
@@ -20,11 +20,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({ settings, onEndGame, onE
   const [isPaused, setIsPaused] = useState(false);
   
   // New states for start sequence
-  const [gamePhase, setGamePhase] = useState<GamePhase>('ready');
+  const [gamePhase, setGamePhase] = useState<GamePhase>('instructions');
   const [startCountdown, setStartCountdown] = useState(5);
 
   const timerRef = useRef<number | null>(null);
 
+  // Initialize Deck
   useEffect(() => {
     // Shuffle and slice deck to the card limit immediately
     const shuffled = [...WORD_LIST];
@@ -33,14 +34,17 @@ export const GameScreen: React.FC<GameScreenProps> = ({ settings, onEndGame, onE
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     setDeck(shuffled.slice(0, settings.cardLimit));
-
-    // Initial sequence
-    const readyTimer = setTimeout(() => {
-        setGamePhase('countdown');
-    }, 1500); // Show "Ready" for 1.5s
-
-    return () => clearTimeout(readyTimer);
   }, [settings.cardLimit]);
+
+  // Handle Ready Phase Transition
+  useEffect(() => {
+    if (gamePhase === 'ready') {
+        const readyTimer = setTimeout(() => {
+            setGamePhase('countdown');
+        }, 1500); // Show "Ready" for 1.5s
+        return () => clearTimeout(readyTimer);
+    }
+  }, [gamePhase]);
 
   // Handle Start Countdown (5...4...3...)
   useEffect(() => {
@@ -113,9 +117,29 @@ export const GameScreen: React.FC<GameScreenProps> = ({ settings, onEndGame, onE
     }
   };
 
+  const getFullInstructionText = () => {
+      const lang = settings.language;
+      switch (settings.mode) {
+          case GameMode.MIME: 
+            return lang === Language.DA 
+                ? 'Brug kroppen til at vise ordet. Ingen lyde!' 
+                : 'Use your body to show the word. No sounds!';
+          case GameMode.EXPLAIN: 
+            return lang === Language.DA 
+                ? 'Forklar ordet uden at sige selve ordet!' 
+                : 'Explain the word without saying the word itself!';
+          case GameMode.SILENT: 
+            return lang === Language.DA 
+                ? 'Sig ordet tydeligt uden lyd. De andre skal mundaflæse!' 
+                : 'Mouth the word clearly without sound. Others must lip-read!';
+          default: return '';
+      }
+  };
+
   if (deck.length === 0) return <div className="text-white font-bold text-2xl">Loading...</div>;
 
   const currentCard = deck[currentIndex];
+  const isDa = settings.language === Language.DA;
 
   // Dynamic background based on timer urgency
   const bgColorClass = timeLeft <= 5 && timeLeft > 0
@@ -136,8 +160,59 @@ export const GameScreen: React.FC<GameScreenProps> = ({ settings, onEndGame, onE
              <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-black/5 rounded-full blur-3xl" />
         </div>
 
-        {/* --- START SEQUENCE OVERLAY --- */}
-        {gamePhase !== 'playing' && (
+        {/* --- INSTRUCTION OVERLAY --- */}
+        {gamePhase === 'instructions' && (
+            <div 
+                onClick={() => setGamePhase('ready')}
+                className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-6 cursor-pointer animate-fade-in"
+            >
+                <div className="bg-white text-slate-900 max-w-2xl w-full p-8 md:p-12 rounded-[2.5rem] shadow-2xl border-[8px] border-yellow-400 flex flex-col items-center text-center animate-pop relative overflow-hidden group">
+                    
+                    {/* Floating decoration */}
+                    <div className="absolute -top-10 -left-10 w-32 h-32 bg-blue-100 rounded-full blur-xl opacity-50"></div>
+                    <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-pink-100 rounded-full blur-xl opacity-50"></div>
+
+                    <h2 className="text-4xl md:text-5xl font-black text-[#0ea5e9] mb-8 uppercase tracking-tight relative z-10">
+                        {isDa ? 'Sådan spiller I' : 'How to play'}
+                    </h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 w-full relative z-10">
+                        <div className="bg-blue-50 p-6 rounded-3xl border-4 border-blue-100 flex flex-col items-center gap-3">
+                            <div className="bg-white p-3 rounded-full shadow-sm">
+                                <Users size={40} className="text-[#0ea5e9]" />
+                            </div>
+                            <h3 className="font-black text-xl">{isDa ? 'Lav makkerpar' : 'Make pairs'}</h3>
+                            <p className="text-slate-600 font-medium leading-tight">
+                                {isDa ? 'Stil jer overfor hinanden.' : 'Stand facing each other.'}
+                            </p>
+                        </div>
+                        <div className="bg-pink-50 p-6 rounded-3xl border-4 border-pink-100 flex flex-col items-center gap-3">
+                            <div className="bg-white p-3 rounded-full shadow-sm">
+                                <ScanFace size={40} className="text-pink-500" />
+                            </div>
+                            <h3 className="font-black text-xl">{isDa ? 'Ryg til skærmen' : 'Back to screen'}</h3>
+                            <p className="text-slate-600 font-medium leading-tight">
+                                {isDa ? 'Den der gætter, må ikke se skærmen!' : 'The guesser cannot look at the screen!'}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-yellow-50 w-full p-6 rounded-3xl border-4 border-yellow-200 mb-10 relative z-10">
+                         <h3 className="font-black text-xl mb-2 uppercase text-yellow-600">{isDa ? 'Opgaven' : 'The Mission'}</h3>
+                         <p className="text-xl md:text-2xl font-bold text-slate-800">
+                            {getFullInstructionText()}
+                         </p>
+                    </div>
+
+                    <div className="animate-bounce text-slate-400 font-bold uppercase tracking-widest text-sm md:text-base">
+                        {isDa ? 'Klik hvor som helst for at starte' : 'Click anywhere to start'}
+                    </div>
+                </div>
+            </div>
+        )}
+
+        {/* --- START SEQUENCE OVERLAY (READY / COUNTDOWN) --- */}
+        {(gamePhase === 'ready' || gamePhase === 'countdown') && (
             <div className="absolute inset-0 z-[60] bg-[#38bdf8] flex items-center justify-center flex-col animate-fade-in">
                 {gamePhase === 'ready' && (
                     <h1 className="text-6xl md:text-8xl font-black text-white drop-shadow-xl animate-pop text-center p-4">
