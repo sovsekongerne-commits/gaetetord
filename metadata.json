@@ -1,0 +1,5 @@
+{
+  "name": "Gæt et ord",
+  "description": "Et undervisningsspil til sprogfag. Gæt ordet ved hjælp af mime, forklaring eller lydløse ord. Støtter Dansk og Engelsk.",
+  "requestFramePermissions": []
+}
