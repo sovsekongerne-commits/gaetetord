@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { GameMode, Language, GameSettings } from '../types';
-import { Mic2, HandMetal, VolumeX, Play, ChevronLeft, Star, Smile, Zap, Heart, Layers, Info, Users, ScanFace, RefreshCw, ArrowRight, Check } from 'lucide-react';
+import { Mic2, HandMetal, VolumeX, Play, ChevronLeft, Star, Smile, Zap, Heart, Layers, Info, Users, ScanFace, RefreshCw, ArrowRight, Check, Clock } from 'lucide-react';
 
 interface MenuProps {
   onStart: (settings: GameSettings) => void;
 }
 
-type MenuStep = 'intro' | 'tutorial' | 'language' | 'mode' | 'count';
+type MenuStep = 'intro' | 'tutorial' | 'language' | 'mode' | 'count' | 'duration';
 
 export const Menu: React.FC<MenuProps> = ({ onStart }) => {
   const [step, setStep] = useState<MenuStep>('intro');
   const [lang, setLang] = useState<Language>(Language.DA);
   const [mode, setMode] = useState<GameMode>(GameMode.MIME);
+  const [cardCount, setCardCount] = useState<number>(10);
   const [hoveredMode, setHoveredMode] = useState<GameMode | null>(null);
   const [tutorialFlipped, setTutorialFlipped] = useState(false);
 
@@ -26,11 +27,16 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
   };
 
   const handleCountSelect = (count: number) => {
+    setCardCount(count);
+    setStep('duration');
+  };
+
+  const handleDurationSelect = (duration: number) => {
     onStart({ 
         language: lang, 
         mode: mode, 
-        duration: 30, // 30 seconds per card
-        cardLimit: count 
+        duration: duration, 
+        cardLimit: cardCount 
     });
   };
 
@@ -397,35 +403,72 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
   }
 
   // Count Selection
+  if (step === 'count') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#14b8a6] p-4 md:p-6 relative overflow-y-auto">
+        <BackgroundDecorations />
+        <h2 className="text-3xl md:text-5xl font-black text-white mb-8 md:mb-12 text-center drop-shadow-md z-10 flex items-center gap-3 justify-center mt-10 md:mt-0">
+          <span>🔢</span>
+          <span>{lang === Language.DA ? 'Hvor mange kort?' : 'How many cards?'}</span>
+          <span>🃏</span>
+        </h2>
+        
+        <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl z-10 mb-10">
+          {[5, 10, 15, 20].map((count, idx) => (
+               <button
+                  key={count}
+                  onClick={() => handleCountSelect(count)}
+                  className="hover-dance relative overflow-hidden bg-white hover:bg-teal-50 text-teal-600 p-6 md:p-10 rounded-[1.5rem] md:rounded-[2rem] shadow-[0_6px_0_#0f766e] md:shadow-[0_8px_0_#0f766e] active:translate-y-[6px] active:shadow-none transition-all flex flex-col items-center justify-center group aspect-square md:aspect-auto md:h-64"
+              >
+                  <Layers size={40} className="mb-2 md:mb-4 opacity-50 md:w-20 md:h-20" />
+                  <span className="text-5xl md:text-8xl font-black">{count}</span>
+                  <span className="text-sm md:text-xl font-bold uppercase mt-2">{lang === Language.DA ? 'Kort' : 'Cards'}</span>
+                  <div className="absolute top-2 right-4 opacity-0 group-hover:opacity-100 text-2xl md:text-3xl transition-opacity">👍</div>
+              </button>
+          ))}
+        </div>
+
+        <button 
+          onClick={() => setStep('mode')}
+          className="mb-8 text-white/70 hover:text-white font-bold text-xl flex items-center gap-2 z-10"
+        >
+          <ChevronLeft size={32} /> {lang === Language.DA ? 'Vælg kategori igen' : 'Change category'}
+        </button>
+      </div>
+    );
+  }
+
+  // Duration Selection
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#14b8a6] p-6 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#f97316] p-4 md:p-6 relative overflow-y-auto">
       <BackgroundDecorations />
-      <h2 className="text-3xl md:text-5xl font-black text-white mb-12 text-center drop-shadow-md z-10 flex items-center gap-3 justify-center">
-        <span>🔢</span>
-        <span>{lang === Language.DA ? 'Hvor mange kort?' : 'How many cards?'}</span>
-        <span>🃏</span>
+      <h2 className="text-3xl md:text-5xl font-black text-white mb-8 md:mb-12 text-center drop-shadow-md z-10 flex items-center gap-3 justify-center mt-10 md:mt-0">
+        <span>⏱️</span>
+        <span>{lang === Language.DA ? 'Hvor lang tid skal i bruge pr. ord?' : 'How much time per word?'}</span>
+        <span>⏳</span>
       </h2>
       
-      <div className="grid grid-cols-2 gap-6 w-full max-w-2xl z-10">
-        {[5, 10, 15, 20].map((count, idx) => (
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 w-full max-w-4xl z-10 mb-10">
+        {[30, 45, 60].map((seconds) => (
              <button
-                key={count}
-                onClick={() => handleCountSelect(count)}
-                className="hover-dance relative overflow-hidden bg-white hover:bg-teal-50 text-teal-600 p-8 md:p-10 rounded-[2rem] shadow-[0_8px_0_#0f766e] active:translate-y-[6px] active:shadow-none transition-all flex flex-col items-center justify-center group aspect-square"
+                key={seconds}
+                onClick={() => handleDurationSelect(seconds)}
+                className="hover-dance relative overflow-hidden bg-white hover:bg-orange-50 text-orange-600 p-6 md:p-10 rounded-[1.5rem] md:rounded-[2rem] shadow-[0_6px_0_#c2410c] md:shadow-[0_8px_0_#c2410c] active:translate-y-[6px] active:shadow-none transition-all flex flex-col items-center justify-center group h-48 md:h-64"
             >
-                <Layers size={50} className="mb-4 opacity-50 md:w-20 md:h-20" />
-                <span className="text-6xl md:text-8xl font-black">{count}</span>
-                <span className="text-lg md:text-xl font-bold uppercase mt-2">{lang === Language.DA ? 'Kort' : 'Cards'}</span>
-                <div className="absolute top-2 right-4 opacity-0 group-hover:opacity-100 text-3xl transition-opacity">👍</div>
+                <div className="mb-2 md:mb-4 opacity-50">
+                    <Clock size={40} className="md:w-16 md:h-16" />
+                </div>
+                <span className="text-5xl md:text-7xl font-black">{seconds}</span>
+                <span className="text-sm md:text-xl font-bold uppercase mt-2">{lang === Language.DA ? 'Sekunder' : 'Seconds'}</span>
             </button>
         ))}
       </div>
 
       <button 
-        onClick={() => setStep('mode')}
-        className="mt-12 text-white/70 hover:text-white font-bold text-xl flex items-center gap-2 z-10"
+        onClick={() => setStep('count')}
+        className="mb-8 text-white/70 hover:text-white font-bold text-xl flex items-center gap-2 z-10"
       >
-        <ChevronLeft size={32} /> {lang === Language.DA ? 'Vælg kategori igen' : 'Change category'}
+        <ChevronLeft size={32} /> {lang === Language.DA ? 'Vælg antal igen' : 'Change count'}
       </button>
     </div>
   );
