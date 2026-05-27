@@ -5,18 +5,19 @@ import { GroupManager } from './groups/GroupManager';
 
 interface MenuProps {
   onStart: (settings: GameSettings) => void;
+  isGroupManagerOpen: boolean;
+  setIsGroupManagerOpen: (open: boolean) => void;
 }
 
 type MenuStep = 'intro' | 'tutorial' | 'language' | 'mode' | 'count' | 'duration';
 
-export const Menu: React.FC<MenuProps> = ({ onStart }) => {
+export const Menu: React.FC<MenuProps> = ({ onStart, isGroupManagerOpen, setIsGroupManagerOpen }) => {
   const [step, setStep] = useState<MenuStep>('intro');
   const [lang, setLang] = useState<Language>(Language.DA);
   const [mode, setMode] = useState<GameMode>(GameMode.MIME);
   const [cardCount, setCardCount] = useState<number>(10);
   const [hoveredMode, setHoveredMode] = useState<GameMode | null>(null);
   const [tutorialFlipped, setTutorialFlipped] = useState(false);
-  const [isGroupManagerOpen, setIsGroupManagerOpen] = useState(false);
 
   const handleLanguageSelect = (selectedLang: Language) => {
     setLang(selectedLang);
@@ -129,12 +130,6 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
           <Users className="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" />
           <span>Grupper 👥</span>
         </button>
-
-        {/* Group Manager Sidebar component */}
-        <GroupManager 
-          isOpen={isGroupManagerOpen} 
-          onClose={() => setIsGroupManagerOpen(false)} 
-        />
       </div>
     );
   }
@@ -265,6 +260,15 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
 
                 </div>
             </div>
+
+            {/* Tiny Group Manager Floating Button for other pages */}
+            <button
+              onClick={() => setIsGroupManagerOpen(true)}
+              className="fixed bottom-6 right-6 z-[90] bg-[#8b5cf6] hover:bg-[#7c3aed] text-white w-12 h-12 rounded-full shadow-[0_4px_0_#6d28d9] active:translate-y-[2px] active:shadow-[0_1px_0_#6d28d9] border-2 border-white/80 flex items-center justify-center group cursor-pointer transition-all hover:scale-105 select-none"
+              title="Vis Grupper 👥"
+            >
+              <Users size={20} fill="currentColor" />
+            </button>
         </div>
     );
   }
@@ -309,6 +313,14 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
         >
             <ChevronLeft size={32} /> Tilbage
         </button>
+            {/* Tiny Group Manager Floating Button for other pages */}
+            <button
+              onClick={() => setIsGroupManagerOpen(true)}
+              className="fixed bottom-6 right-6 z-[90] bg-[#8b5cf6] hover:bg-[#7c3aed] text-white w-12 h-12 rounded-full shadow-[0_4px_0_#6d28d9] active:translate-y-[2px] active:shadow-[0_1px_0_#6d28d9] border-2 border-white/80 flex items-center justify-center group cursor-pointer transition-all hover:scale-105 select-none"
+              title="Vis Grupper 👥"
+            >
+              <Users size={20} fill="currentColor" />
+            </button>
       </div>
     );
   }
@@ -416,6 +428,14 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
         >
             <ChevronLeft size={32} /> {lang === Language.DA ? 'Vælg sprog igen' : 'Change language'}
         </button>
+            {/* Tiny Group Manager Floating Button for other pages */}
+            <button
+              onClick={() => setIsGroupManagerOpen(true)}
+              className="fixed bottom-6 right-6 z-[90] bg-[#8b5cf6] hover:bg-[#7c3aed] text-white w-12 h-12 rounded-full shadow-[0_4px_0_#6d28d9] active:translate-y-[2px] active:shadow-[0_1px_0_#6d28d9] border-2 border-white/80 flex items-center justify-center group cursor-pointer transition-all hover:scale-105 select-none"
+              title="Vis Grupper 👥"
+            >
+              <Users size={20} fill="currentColor" />
+            </button>
         </div>
     );
   }
@@ -452,6 +472,14 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
         >
           <ChevronLeft size={32} /> {lang === Language.DA ? 'Vælg kategori igen' : 'Change category'}
         </button>
+            {/* Tiny Group Manager Floating Button for other pages */}
+            <button
+              onClick={() => setIsGroupManagerOpen(true)}
+              className="fixed bottom-6 right-6 z-[90] bg-[#8b5cf6] hover:bg-[#7c3aed] text-white w-12 h-12 rounded-full shadow-[0_4px_0_#6d28d9] active:translate-y-[2px] active:shadow-[0_1px_0_#6d28d9] border-2 border-white/80 flex items-center justify-center group cursor-pointer transition-all hover:scale-105 select-none"
+              title="Vis Grupper 👥"
+            >
+              <Users size={20} fill="currentColor" />
+            </button>
       </div>
     );
   }
@@ -488,6 +516,14 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
       >
         <ChevronLeft size={32} /> {lang === Language.DA ? 'Vælg antal igen' : 'Change count'}
       </button>
+        {/* Tiny Group Manager Floating Button for other pages */}
+        <button
+          onClick={() => setIsGroupManagerOpen(true)}
+          className="fixed bottom-6 right-6 z-[90] bg-[#8b5cf6] hover:bg-[#7c3aed] text-white w-12 h-12 rounded-full shadow-[0_4px_0_#6d28d9] active:translate-y-[2px] active:shadow-[0_1px_0_#6d28d9] border-2 border-white/80 flex items-center justify-center group cursor-pointer transition-all hover:scale-105 select-none"
+          title="Vis Grupper 👥"
+        >
+          <Users size={20} fill="currentColor" />
+        </button>
     </div>
   );
 };

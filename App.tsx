@@ -3,13 +3,15 @@ import { AppState, GameSettings } from './types';
 import { Menu } from './components/Menu';
 import { GameScreen } from './components/GameScreen';
 import { ResultScreen } from './components/ResultScreen';
-import { Maximize, Minimize } from 'lucide-react';
+import { Maximize, Minimize, Users } from 'lucide-react';
+import { GroupManager } from './components/groups/GroupManager';
 
 export default function App() {
   const [view, setView] = useState<AppState>(AppState.MENU);
   const [gameSettings, setGameSettings] = useState<GameSettings | null>(null);
   const [totalCardsPlayed, setTotalCardsPlayed] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isGroupManagerOpen, setIsGroupManagerOpen] = useState(false);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -70,7 +72,13 @@ export default function App() {
         )}
       </button>
 
-      {view === AppState.MENU && <Menu onStart={handleStartGame} />}
+      {view === AppState.MENU && (
+        <Menu 
+          onStart={handleStartGame} 
+          isGroupManagerOpen={isGroupManagerOpen}
+          setIsGroupManagerOpen={setIsGroupManagerOpen}
+        />
+      )}
       
       {view === AppState.GAME && gameSettings && (
         <GameScreen 
@@ -88,6 +96,23 @@ export default function App() {
             onHome={handleExit}
         />
       )}
+
+      {/* Tiny Group Button visible globally in-game and on results */}
+      {view !== AppState.MENU && (
+        <button
+          onClick={() => setIsGroupManagerOpen(true)}
+          className="fixed bottom-6 right-6 z-[90] bg-[#8b5cf6] hover:bg-[#7c3aed] text-white w-12 h-12 rounded-full shadow-[0_4px_0_#6d28d9] active:translate-y-[2px] active:shadow-[0_1px_0_#6d28d9] border-2 border-white/80 flex items-center justify-center group cursor-pointer transition-all hover:scale-105 select-none"
+          title="Vis Grupper 👥"
+        >
+          <Users size={20} fill="currentColor" />
+        </button>
+      )}
+
+      {/* Global Group Manager Sidebar */}
+      <GroupManager 
+        isOpen={isGroupManagerOpen} 
+        onClose={() => setIsGroupManagerOpen(false)} 
+      />
     </div>
   );
 }
