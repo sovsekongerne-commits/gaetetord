@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GameMode, Language, GameSettings } from '../types';
 import { Mic2, HandMetal, VolumeX, Play, ChevronLeft, Star, Smile, Zap, Heart, Layers, Info, Users, ScanFace, RefreshCw, ArrowRight, Check, Clock } from 'lucide-react';
+import { GroupManager } from './groups/GroupManager';
 
 interface MenuProps {
   onStart: (settings: GameSettings) => void;
@@ -15,6 +16,7 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
   const [cardCount, setCardCount] = useState<number>(10);
   const [hoveredMode, setHoveredMode] = useState<GameMode | null>(null);
   const [tutorialFlipped, setTutorialFlipped] = useState(false);
+  const [isGroupManagerOpen, setIsGroupManagerOpen] = useState(false);
 
   const handleLanguageSelect = (selectedLang: Language) => {
     setLang(selectedLang);
@@ -97,7 +99,7 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
              <div className="absolute -bottom-6 -right-6 text-6xl animate-bounce" style={{animationDuration: '2.5s'}}>🎨</div>
              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-[#0ea5e9] drop-shadow-sm leading-none text-center">
               Gæt et ord
-            </h1>
+             </h1>
           </div>
           <p className="text-blue-100 text-xl md:text-3xl font-bold mb-12 md:mb-20 animate-pulse drop-shadow-md text-center leading-relaxed">
             Gæt og Grimasser for alle!
@@ -117,6 +119,22 @@ export const Menu: React.FC<MenuProps> = ({ onStart }) => {
             <span className="whitespace-nowrap">START SPILLET 🚀</span>
           </button>
         </div>
+
+        {/* Discrete Group Manager Floating Widget Button */}
+        <button
+          onClick={() => setIsGroupManagerOpen(true)}
+          className="fixed bottom-6 right-6 z-[90] bg-[#8b5cf6] hover:bg-[#7c3aed] text-white py-4 px-6 rounded-2xl shadow-[0_6px_0_#6d28d9] active:translate-y-[4px] active:shadow-[0_2px_0_#6d28d9] border-4 border-[#f5f3ff] font-black flex items-center gap-2 group cursor-pointer transition-all animate-float text-base sm:text-lg select-none"
+          title="Gruppeinddeling & Klasser"
+        >
+          <Users className="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" />
+          <span>Grupper 👥</span>
+        </button>
+
+        {/* Group Manager Sidebar component */}
+        <GroupManager 
+          isOpen={isGroupManagerOpen} 
+          onClose={() => setIsGroupManagerOpen(false)} 
+        />
       </div>
     );
   }
