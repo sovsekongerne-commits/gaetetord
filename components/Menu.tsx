@@ -121,6 +121,33 @@ export const Menu: React.FC<MenuProps> = ({ onStart, isGroupManagerOpen, setIsGr
           </button>
         </div>
 
+        {/* Playful Pointer Arrow and Text */}
+        <div 
+          className="fixed bottom-24 right-8 z-[80] select-none pointer-events-none flex flex-col items-end animate-wiggle"
+          style={{ animationDuration: '3s' }}
+        >
+          <div className="bg-[#fbbf24] text-slate-900 font-black text-sm px-3.5 py-1.5 rounded-full shadow-lg border-2 border-white rotate-[-4deg] tracking-wide flex items-center gap-1">
+            <span>✨ Lav grupper her!</span>
+          </div>
+          <svg 
+            width="40" 
+            height="40" 
+            viewBox="0 0 40 40" 
+            fill="none" 
+            className="text-[#fbbf24] stroke-current stroke-[3] drop-shadow-md mt-1 mr-10 translate-x-4"
+          >
+            <path 
+              d="M10 5 Q 22 8, 25 25" 
+              strokeLinecap="round" 
+            />
+            <path 
+              d="M18 20 L 25 25 L 28 17" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+            />
+          </svg>
+        </div>
+
         {/* Discrete Group Manager Floating Widget Button */}
         <button
           onClick={() => setIsGroupManagerOpen(true)}
