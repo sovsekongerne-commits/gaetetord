@@ -5,6 +5,7 @@ import { GameScreen } from './components/GameScreen';
 import { ResultScreen } from './components/ResultScreen';
 import { Maximize, Minimize, Users } from 'lucide-react';
 import { GroupManager } from './components/groups/GroupManager';
+import { AudioControl } from './components/AudioControl';
 
 export default function App() {
   const [view, setView] = useState<AppState>(AppState.MENU);
@@ -59,6 +60,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans antialiased relative">
+      {/* Global Audio Controls & Settings Toggle */}
+      <AudioControl isMenu={view === AppState.MENU} />
+
       {/* Global Fullscreen Toggle */}
       <button 
         onClick={toggleFullscreen}
