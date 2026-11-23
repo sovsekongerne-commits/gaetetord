@@ -3,7 +3,7 @@ import { AppState, GameSettings } from './types';
 import { Menu } from './components/Menu';
 import { GameScreen } from './components/GameScreen';
 import { ResultScreen } from './components/ResultScreen';
-import { Maximize, Minimize, Users } from 'lucide-react';
+import { Maximize, Minimize, Users, ArrowLeft } from 'lucide-react';
 import { GroupManager } from './components/groups/GroupManager';
 import { AudioControl } from './components/AudioControl';
 
@@ -60,6 +60,19 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans antialiased relative">
+      {/* Tilbage til Kongskole.dk (kun i menu) */}
+      {view === AppState.MENU && (
+        <button
+          type="button"
+          onClick={() => { window.location.href = 'https://kongskole.dk'; }}
+          className="fixed top-4 left-4 z-[100] bg-white/20 hover:bg-white/40 text-white p-3 rounded-xl backdrop-blur-sm transition-all shadow-lg border border-white/20 group cursor-pointer"
+          aria-label="Tilbage til Kongskole.dk"
+          title="Tilbage til Kongskole.dk"
+        >
+          <ArrowLeft size={24} strokeWidth={2.5} className="group-hover:-translate-x-0.5 transition-transform" />
+        </button>
+      )}
+
       {/* Global Audio Controls & Settings Toggle */}
       <AudioControl isMenu={view === AppState.MENU} />
 
