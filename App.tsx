@@ -3,7 +3,7 @@ import { AppState, GameSettings } from './types';
 import { Menu } from './components/Menu';
 import { GameScreen } from './components/GameScreen';
 import { ResultScreen } from './components/ResultScreen';
-import { Maximize, Minimize, Users, ArrowLeft } from 'lucide-react';
+import { Maximize, Minimize, Users, LogOut } from 'lucide-react';
 import { GroupManager } from './components/groups/GroupManager';
 import { AudioControl } from './components/AudioControl';
 
@@ -69,7 +69,7 @@ export default function App() {
           aria-label="Tilbage til Kongskole.dk"
           title="Tilbage til Kongskole.dk"
         >
-          <ArrowLeft size={24} strokeWidth={2.5} className="group-hover:-translate-x-0.5 transition-transform" />
+          <LogOut size={24} strokeWidth={2.5} className="group-hover:translate-x-0.5 transition-transform" />
         </button>
       )}
 
